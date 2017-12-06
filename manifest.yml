@@ -1,0 +1,4 @@
+applications:
+- name: logjam
+  services:
+    - battle-cat

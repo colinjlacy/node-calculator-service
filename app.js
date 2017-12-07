@@ -1,4 +1,6 @@
+
 var express = require('express');
+var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -6,21 +8,26 @@ var routes = require('./routes/index');
 var math = require('./routes/math');
 var user = require('./routes/user');
 var config = require('./routes/config');
+var essentials = require('./routes/essentials');
 
 var app = express();
 
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 if(process.env.NODE_ENV !== 'prod') {
   app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "http://localhost:8080");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header("Access-Control-Allow-Headers", "X-XSRF-TOKEN, Authorization, Origin, X-Requested-With, Content-Type," +
+        " Accept");
     next();
   });
 }
 
 app.use('/', routes);
+app.use('/essentials', essentials);
 app.use('/user', user);
 app.use('/math', math);
 app.use('/config', config);
